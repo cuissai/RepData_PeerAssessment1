@@ -54,11 +54,11 @@ hist(steps_by_day$steps, main = paste("Total Steps per Day"),col="green", xlab="
 ![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
 
 ```r
-Stepmean <- mean(steps_by_day$steps)
+Stepmean <-round(mean(steps_by_day$steps),2)
 Stepmedian <- median(steps_by_day$steps)
 ```
 
->Mean of the total steps taken per day is **1.0766189\times 10^{4}**
+>Mean of the total steps taken per day is **1.076619\times 10^{4}**
 
 >Median of the total steps taken per day is **10765**
 
@@ -107,18 +107,15 @@ steps_by_day_i <- aggregate(steps ~ date, imputed_data, sum)
 ```
 
 ```r
-his1 <- hist(steps_by_day_i$steps)
-his2 <- hist(steps_by_day$steps)
-```
-
-```r
+his1 <- hist(steps_by_day_i$steps,plot=FALSE)
+his2 <- hist(steps_by_day$steps,plot=FALSE)
 mat <- rbind(his1$counts, his2$counts)
 colnames(mat)<-c("5000","10000","15000","20000","25000")
 barplot(mat, beside = TRUE,main = paste("Total Steps Each Day"),xlab="Qty of Steps", col = c("blue", "red"))
 legend("topright", c("Imputed", "Non-imputed"), col=c("blue", "red"), lwd=10)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-10-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-9-1.png) 
 Calculate new mean and median for imputed data, and difference between imputed (rmean.i , rmedian.i)and non-imputed data (Stepmean , Stepmedian).
 
 ```r
@@ -134,7 +131,7 @@ total_diff <- sum(steps_by_day_i$steps) - sum(steps_by_day$steps)
 ```
 - The imputed data mean is **1.0589694\times 10^{4}**
 - The imputed data median is **1.0766189\times 10^{4}**
-- The difference between the non-imputed mean and imputed mean is **-176.4948964**
+- The difference between the non-imputed mean and imputed mean is **-176.4962171**
 - The difference between the non-imputed mean and imputed mean is **1.1886792**
 - The difference between total number of steps between imputed and non-imputed data is **7.5363321\times 10^{4}**.
 - Thus, there were **7.5363321\times 10^{4}** more steps in the imputed data.
@@ -157,7 +154,7 @@ library(lattice)
 xyplot(steps_by_interval_i$steps ~ steps_by_interval_i$interval|steps_by_interval_i$day, main="Average Steps per Day by Interval",xlab="Interval", ylab="Steps",layout=c(1,2), type="l")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-13-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-12-1.png) 
 
 
 - There is a higher peak earlier on weekdays, and a more regular activity weekend.
@@ -174,7 +171,7 @@ library(lattice)
 xyplot(steps_by_interval_i$steps ~ steps_by_interval_i$interval|steps_by_interval_i$day, main="Average Steps per Day by Interval",xlab="Interval", ylab="Steps",layout=c(1,2), type="l")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-14-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-13-1.png) 
 
 
 - There is a higher peak earlier on weekdays, and a more regular activity weekend.

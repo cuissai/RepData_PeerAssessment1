@@ -30,7 +30,7 @@ The dataset is stored in a comma-separated-value (CSV) file and there are a tota
 
 - Download data if they are absent from the working directory. - Unzip and read the csv data in a data table. ``data``
 
-```{r,echo=TRUE,cache=TRUE}
+```{r,echo=TRUE}
 if(!file.exists("activity.zip")) {
         temp <- tempfile()
         download.file("http://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip",temp)
@@ -44,14 +44,14 @@ data <- read.csv("activity.csv",header=TRUE)
 ## What is mean total number of steps taken per day?
 
 - Total number of steps taken per day
-```{r,echo=TRUE,cache=TRUE}
+```{r,echo=TRUE}
 steps_by_day <- aggregate(steps ~ date, data, sum)
 ```
 
 - Histogram frequency of quantity of steps taken each day
-```{r, cache=TRUE,echo=TRUE,results='hold'}
+```{r,echo=TRUE}
 hist(steps_by_day$steps, main = paste("Total Steps per Day"),col="green", xlab="Qty of Steps")
-Stepmean <- mean(steps_by_day$steps)
+Stepmean <-round(mean(steps_by_day$steps),2)
 Stepmedian <- median(steps_by_day$steps)
 ```
 
@@ -66,14 +66,14 @@ Stepmedian <- median(steps_by_day$steps)
 - 5-minute interval for each day (x-axis),  
 - averaged number of steps across all interval per days (y-axis)
 
-```{r,echo=TRUE,cache=TRUE}
+```{r,echo=TRUE}
 steps_by_interval <- aggregate(steps ~ interval, data, mean)
 
 plot(steps_by_interval$interval,steps_by_interval$steps, col="red",lwd=3, type="l", xlab="Interval", ylab="Number of Steps",main="Average Number of Steps per Day by Interval")
 ```   
 
 - define interval, with maximum average's step   
-```{r,echo=TRUE,cache=TRUE}
+```{r,echo=TRUE}
 max_interval <- steps_by_interval[which.max(steps_by_interval$steps),1]
 ```
 
@@ -83,37 +83,35 @@ max_interval <- steps_by_interval[which.max(steps_by_interval$steps),1]
 
 A simple imputation. Missing values were imputed by inserting the average for each interval. Thus, if interval 10 was missing on 10-02-2012, the average for that interval for all days (0.1320755), replaced the NA.
 
-```{r,echo=TRUE,cache=TRUE}
+```{r,echo=TRUE}
 dataNA <- sum(!complete.cases(data))
 imputed_data <- transform(data, steps = ifelse(is.na(data$steps), steps_by_interval$steps[match(data$interval, steps_by_interval$interval)], data$steps))
 ```
 Zeroes for 10-01-2012 because it was, which had all 288 steps equal NA . We're assumed to be zeros to fit the trend of the data. 
-```{r,echo=TRUE,cache=TRUE}
+```{r,echo=TRUE}
 imputed_data[as.character(imputed_data$date) == "2012-10-01", 1] <- 0
 ```
 Recount total steps by day and create Histogram to show difference with step by day without imputed data.
-```{r,echo=TRUE,cache=TRUE}
+```{r,echo=TRUE}
 steps_by_day_i <- aggregate(steps ~ date, imputed_data, sum)
 ```
-```{r,echo=TRUE,cache=TRUE,eval=FALSE}
-his1 <- hist(steps_by_day_i$steps)
-his2 <- hist(steps_by_day$steps)
-```
-```{r,echo=TRUE,cache=TRUE}
+```{r,echo=TRUE}
+his1 <- hist(steps_by_day_i$steps,plot=FALSE)
+his2 <- hist(steps_by_day$steps,plot=FALSE)
 mat <- rbind(his1$counts, his2$counts)
 colnames(mat)<-c("5000","10000","15000","20000","25000")
 barplot(mat, beside = TRUE,main = paste("Total Steps Each Day"),xlab="Qty of Steps", col = c("blue", "red"))
 legend("topright", c("Imputed", "Non-imputed"), col=c("blue", "red"), lwd=10)
 ````
 Calculate new mean and median for imputed data, and difference between imputed (rmean.i , rmedian.i)and non-imputed data (Stepmean , Stepmedian).
-```{r,echo=TRUE,cache=TRUE}
+```{r,echo=TRUE}
 rmean.i <- mean(steps_by_day_i$steps)
 rmedian.i <- median(steps_by_day_i$steps)
 mean_diff <- rmean.i - Stepmean
 med_diff <- rmedian.i - Stepmedian
 ```
 Calculate total difference.
-```{r,echo=TRUE,cache=TRUE}
+```{r,echo=TRUE}
 total_diff <- sum(steps_by_day_i$steps) - sum(steps_by_day$steps)
 ```
 - The imputed data mean is **`r rmean.i`**
@@ -129,7 +127,7 @@ total_diff <- sum(steps_by_day_i$steps) - sum(steps_by_day$steps)
 Created a plot to compare and contrast number of steps between the week and weekend.    
 my computer speake french sorry :)   
 
-```{r,echo=TRUE,cache=TRUE}
+```{r,echo=TRUE}
 daysnames <- c("lundi","mardi","mercredi","jeudi","vendredi")
 imputed_data$day = as.factor(ifelse(is.element(weekdays(as.Date(imputed_data$date)),daysnames), "Weekday", "Weekend"))
 
@@ -143,7 +141,7 @@ xyplot(steps_by_interval_i$steps ~ steps_by_interval_i$interval|steps_by_interva
 
 - There is a higher peak earlier on weekdays, and a more regular activity weekend.
  
-```{r,echo=TRUE,cache=TRUE}
+```{r,echo=TRUE}
 daysnames <- c("Monday","Tuesday","Wednesday","Thursday","Friday")
 imputed_data$day = as.factor(ifelse(is.element(weekdays(as.Date(imputed_data$date)),daysnames), "Weekday", "Weekend"))
 
